@@ -18,7 +18,7 @@ if dpkg --compare-versions "$love_version" lt 11.0; then
   make -j$(nproc) || error "build failed"
   love_path="$HOME/.love_games/friday_night_funkin_rewritten/love/src/love"
 else
-  install_packages love || exit 1
+  sudo apt install love || exit 1
   love_path="love"
 fi
 
