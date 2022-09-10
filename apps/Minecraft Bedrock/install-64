@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# Get dependencies
+# obtain model and jetson_model
+get_model &>/dev/null
+if [[ -z "$jetson_model" ]]; then
+  sudo dpkg --add-architecture armhf
+  install_packages curl libx11-6:i386 libxext6:i386 libegl1-mesa:i386 zlib1g:i386 zlib1g-dev:i386 libstdc++6:i386 libgl1-mesa-dri:i386 libasound2:i386 libpulse0:i386 libcom-err2:i386 libgmp10:i386 libp11-kit0:i386 libsystemd0:i386 libllvm9:i386 || exit 1
+fi
+
+#Download file
+mkdir -p ~/.local/bin || error "Could not make directory"
+wget -O ~/.local/bin/MCBedrock.AppImage 'https://github.com/ChristopherHX/linux-packaging-scripts/releases/download/v0.3.4-688/Minecraft_Bedrock_Launcher-i386-v0.3.4.688.AppImage' || error "failed to download Minecraft Bedrock Launcher"
+chmod +x ~/.local/bin/MCBedrock.AppImage
+
+enable_module fuse || exit 1
+
+#Make Desktop file
+echo "[Desktop Entry]
+Version=1.1
+Type=Application
+Name=Minecraft Bedrock Launcher
+Comment=A Minecraft: Bedrock Edition
+Icon=$(dirname "$0")/icon-64.png
+Exec=env QTWEBENGINE_CHROMIUM_FLAGS='--enable-logging --log-level=0 --v=3 --single-process --no-sandbox' GALLIUM_HUD=simple,fps $HOME/.local/bin/MCBedrock.AppImage
+Categories=Game;
+Terminal=false
+StartupNotify=true" > ~/.local/share/applications/minecraftbedrock.desktop
